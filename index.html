@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSA Lab Solutions</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1c2024;--mut:#667;--bd:#dfe3e8;--code:#f0f2f5;--acc:#2f6fed}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--card:#1d2026;--fg:#e8eaed;--mut:#9aa3ad;--bd:#2d323a;--code:#14161a;--acc:#6b9bff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.5rem;margin:0 0 12px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+nav a{min-width:34px;text-align:center;padding:4px 8px;border:1px solid var(--bd);border-radius:6px;color:var(--acc);text-decoration:none;background:var(--card);font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:18px;scroll-margin-top:12px}
+h2{font-size:1.1rem;margin:0 0 10px}
+.codewrap{position:relative}
+pre{margin:0;background:var(--code);border:1px solid var(--bd);border-radius:8px;padding:12px;overflow-x:auto;font:13.5px/1.5 Consolas,Menlo,monospace}
+.codewrap pre{padding-top:40px}
+.copy{position:absolute;top:8px;right:8px;padding:4px 10px;font:inherit;font-size:.8rem;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+.copy:hover{border-color:var(--acc);color:var(--acc)}
+.copy.done{background:var(--acc);color:#fff;border-color:var(--acc)}
+.outlabel{margin:12px 0 4px;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.out{color:var(--mut)}
+</style></head><body><main>
+<h1>DSA Lab Exam – Shortest Python Solutions (with sample output)</h1>
+<nav><a href="#q1">1</a><a href="#q2">2</a><a href="#q3">3</a><a href="#q4">4</a><a href="#q5">5</a><a href="#q6">6</a><a href="#q7">7</a><a href="#q8">8</a><a href="#q9">9</a><a href="#q10">10</a><a href="#q11">11</a><a href="#q12">12</a><a href="#q13">13</a><a href="#q14">14</a><a href="#q15">15</a><a href="#q16">16</a><a href="#q17">17</a><a href="#q18">18</a><a href="#q19">19</a><a href="#q20">20</a><a href="#q21">21</a><a href="#q22">22</a><a href="#q23">23</a><a href="#q24">24</a><a href="#q25">25</a></nav>
+<section class="card" id="q1">
+<h2>1. Counting Sort</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def count_sort(a):
+    if any(x&lt;0 for x in a): raise ValueError(&quot;Negative input not allowed&quot;)
+    c=[0]*(max(a)+1)
+    for x in a:c[x]+=1
+    return [i for i,n in enumerate(c) for _ in range(n)]
+print(count_sort([4,2,2,8,3,3,1]))
+try: count_sort([3,-1])
+except ValueError as e: print(&quot;Error:&quot;,e)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[1, 2, 2, 3, 3, 4, 8]
+Error: Negative input not allowed</code></pre>
+</section><section class="card" id="q2">
+<h2>2. Merge Sort (strings + inversions)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def ms(a):
+    if len(a)&lt;2:return a,0
+    m=len(a)//2;l,x=ms(a[:m]);r,y=ms(a[m:]);o=[];i=j=0;c=x+y
+    while i&lt;len(l) and j&lt;len(r):
+        if l[i]&lt;=r[j]:o.append(l[i]);i+=1
+        else:o.append(r[j]);j+=1;c+=len(l)-i
+    return o+l[i:]+r[j:],c
+s,c=ms([&quot;pear&quot;,&quot;apple&quot;,&quot;fig&quot;,&quot;banana&quot;]);print(s,&quot;inversions =&quot;,c)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[&#x27;apple&#x27;, &#x27;banana&#x27;, &#x27;fig&#x27;, &#x27;pear&#x27;] inversions = 4</code></pre>
+</section><section class="card" id="q3">
+<h2>3. Quick Sort (Lomuto + random pivot)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>import random
+def qs(a,l,h):
+    if l&lt;h:
+        k=random.randint(l,h);a[k],a[h]=a[h],a[k];i=l
+        for j in range(l,h):
+            if a[j]&lt;a[h]:a[i],a[j]=a[j],a[i];i+=1
+        a[i],a[h]=a[h],a[i];qs(a,l,i-1);qs(a,i+1,h)
+a=[9,4,7,1,8,2];qs(a,0,len(a)-1);print(a)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[1, 2, 4, 7, 8, 9]</code></pre>
+</section><section class="card" id="q4">
+<h2>4. Dynamic Array List</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class DList:
+    def __init__(s):s.a=[None]*2;s.n=0
+    def add(s,x):
+        if s.n==len(s.a):s.a=s.a+[None]*s.n;print(&quot;resized -&gt;&quot;,len(s.a))
+        s.a[s.n]=x;s.n+=1
+l=DList()
+for i in range(5):l.add(i*10)
+print(l.a[:l.n],&quot;size&quot;,l.n,&quot;capacity&quot;,len(l.a))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>resized -&gt; 4
+resized -&gt; 8
+[0, 10, 20, 30, 40] size 5 capacity 8</code></pre>
+</section><section class="card" id="q5">
+<h2>5. Linked Stack</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class Stack:
+    t=None
+    def push(s,v):s.t=(v,s.t)
+    def pop(s):
+        if not s.t:raise IndexError(&quot;Stack underflow&quot;)
+        v,s.t=s.t;return v
+    def peek(s):
+        if not s.t:raise IndexError(&quot;Stack empty&quot;)
+        return s.t[0]
+    isEmpty=lambda s:s.t is None
+st=Stack();st.push(1);st.push(2);print(st.peek(),st.pop(),st.pop(),st.isEmpty())
+try:st.pop()
+except IndexError as e:print(&quot;Error:&quot;,e)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>2 2 1 True
+Error: Stack underflow</code></pre>
+</section><section class="card" id="q6">
+<h2>6. Circular Queue</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class CQ:
+    def __init__(s,k):s.a=[0]*k;s.f=s.n=0
+    def enq(s,x):
+        if s.n==len(s.a):return print(&quot;Queue full&quot;)
+        s.a[(s.f+s.n)%len(s.a)]=x;s.n+=1
+    def deq(s):
+        if not s.n:return print(&quot;Queue empty&quot;)
+        x=s.a[s.f];s.f=(s.f+1)%len(s.a);s.n-=1;return x
+q=CQ(3)
+for x in(1,2,3,4):q.enq(x)
+print(q.deq(),q.deq());q.enq(5);print(q.deq(),q.deq(),q.deq())</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>Queue full
+1 2
+Queue empty
+3 5 None</code></pre>
+</section><section class="card" id="q7">
+<h2>7. Doubly Linked List</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class DLL:
+    h=t=None
+    def add(s,v,front=0):
+        x=[v,None,None]
+        if not s.h:s.h=s.t=x
+        elif front:x[2]=s.h;s.h[1]=x;s.h=x
+        else:x[1]=s.t;s.t[2]=x;s.t=x
+    def rem(s,v):
+        c=s.h
+        while c and c[0]!=v:c=c[2]
+        if c:
+            p,n=c[1],c[2]
+            if p:p[2]=n
+            else:s.h=n
+            if n:n[1]=p
+            else:s.t=p
+    def show(s,rev=0):
+        c=s.t if rev else s.h;o=[]
+        while c:o.append(c[0]);c=c[1 if rev else 2]
+        print(o)
+d=DLL();d.add(2);d.add(3);d.add(1,1);d.show();d.rem(2);d.show();d.show(1)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[1, 2, 3]
+[1, 3]
+[3, 1]</code></pre>
+</section><section class="card" id="q8">
+<h2>8. Circular Linked List - Round Robin</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def rrobin(p,q):
+    N=[[n,t,None] for n,t in p]
+    for i,x in enumerate(N):x[2]=N[(i+1)%len(N)]
+    c,pr,t,n=N[0],N[-1],0,len(N)
+    while n:
+        r=min(q,c[1]);t+=r;c[1]-=r
+        if c[1]:pr=c
+        else:print(c[0],&quot;done at t=%d&quot;%t);pr[2]=c[2];n-=1
+        c=c[2]
+rrobin([(&quot;P1&quot;,5),(&quot;P2&quot;,3),(&quot;P3&quot;,8)],q=3)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>P2 done at t=6
+P1 done at t=11
+P3 done at t=16</code></pre>
+</section><section class="card" id="q9">
+<h2>9. Infix to Postfix</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def post(e):
+    p={&#x27;+&#x27;:1,&#x27;-&#x27;:1,&#x27;*&#x27;:2,&#x27;/&#x27;:2,&#x27;^&#x27;:3};s=[];o=&#x27;&#x27;
+    for c in e:
+        if c.isalnum():o+=c
+        elif c==&#x27;(&#x27;:s.append(c)
+        elif c==&#x27;)&#x27;:
+            while s[-1]!=&#x27;(&#x27;:o+=s.pop()
+            s.pop()
+        else:
+            while s and s[-1]!=&#x27;(&#x27; and (p[s[-1]]&gt;p[c] or p[s[-1]]==p[c] and c!=&#x27;^&#x27;):o+=s.pop()
+            s.append(c)
+    return o+&#x27;&#x27;.join(s[::-1])
+print(post(&quot;A+B*(C^D-E)^(F+G*H)-I&quot;))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>ABCD^E-FGH*+^*+I-</code></pre>
+</section><section class="card" id="q10">
+<h2>10. Balanced Parentheses</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def bal(e):
+    s=[];m={&#x27;)&#x27;:&#x27;(&#x27;,&#x27;}&#x27;:&#x27;{&#x27;,&#x27;]&#x27;:&#x27;[&#x27;}
+    for c in e:
+        if c in m.values():s.append(c)
+        elif c in m and (not s or s.pop()!=m[c]):return False
+    return not s
+print(bal(&quot;{[()]}&quot;),bal(&quot;{[(])}&quot;),bal(&quot;((&quot;))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>True False False</code></pre>
+</section><section class="card" id="q11">
+<h2>11. Ticketing System (FCFS Queue)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>from collections import deque
+q=deque()
+for t in(&quot;T1: Reset password&quot;,&quot;T2: Refund&quot;,&quot;T3: Login issue&quot;):q.append(t)
+while q:print(&quot;Serving&quot;,q.popleft())</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>Serving T1: Reset password
+Serving T2: Refund
+Serving T3: Login issue</code></pre>
+</section><section class="card" id="q12">
+<h2>12. Array Representation of Binary Tree</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>t=[10,5,15,3,7,12,18]
+par=lambda i:(i-1)//2;lc=lambda i:2*i+1;rc=lambda i:2*i+2
+i=1;print(f&quot;node {t[i]}: parent {t[par(i)]}, left {t[lc(i)]}, right {t[rc(i)]}&quot;)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>node 5: parent 10, left 3, right 7</code></pre>
+</section><section class="card" id="q13">
+<h2>13. Linked Binary Tree - iterative Inorder &amp; Level-order</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class T:
+    def __init__(s,v,l=None,r=None):s.v=v;s.l=l;s.r=r
+def ino(r):
+    s=[];o=[];c=r
+    while s or c:
+        while c:s.append(c);c=c.l
+        c=s.pop();o.append(c.v);c=c.r
+    return o
+def lvl(r):
+    q=[r];o=[]
+    while q:c=q.pop(0);o.append(c.v);q+=[x for x in(c.l,c.r) if x]
+    return o
+rt=T(1,T(2,T(4),T(5)),T(3));print(&quot;Inorder:&quot;,ino(rt),&quot;Level:&quot;,lvl(rt))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>Inorder: [4, 2, 5, 1, 3] Level: [1, 2, 3, 4, 5]</code></pre>
+</section><section class="card" id="q14">
+<h2>14. Merkle Tree</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>import hashlib
+H=lambda x:hashlib.sha256(x.encode()).hexdigest()
+def mroot(tx):
+    l=[H(t) for t in tx]
+    while len(l)&gt;1:
+        if len(l)%2:l.append(l[-1])
+        l=[H(l[i]+l[i+1]) for i in range(0,len(l),2)]
+    return l[0]
+tx=[&quot;A-&gt;B:5&quot;,&quot;B-&gt;C:2&quot;,&quot;C-&gt;D:1&quot;];R=mroot(tx)
+print(&quot;Root:&quot;,R[:16]+&quot;...&quot;);print(&quot;Verify original:&quot;,mroot(tx)==R)
+print(&quot;Verify tampered:&quot;,mroot([&quot;A-&gt;B:50&quot;,&quot;B-&gt;C:2&quot;,&quot;C-&gt;D:1&quot;])==R)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>Root: 1af9a1c5573a10a0...
+Verify original: True
+Verify tampered: False</code></pre>
+</section><section class="card" id="q15">
+<h2>15. Min-Heap</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class MH:
+    def __init__(s):s.h=[]
+    def insert(s,x):
+        h=s.h;h.append(x);i=len(h)-1
+        while i and h[(i-1)//2]&gt;h[i]:h[(i-1)//2],h[i]=h[i],h[(i-1)//2];i=(i-1)//2
+    def heapify(s,i=0):
+        h=s.h;m=min((c for c in(i,2*i+1,2*i+2) if c&lt;len(h)),key=lambda c:h[c])
+        if m!=i:h[i],h[m]=h[m],h[i];s.heapify(m)
+    def extractMin(s):
+        h=s.h;h[0],h[-1]=h[-1],h[0];x=h.pop()
+        if h:s.heapify()
+        return x
+m=MH()
+for x in(5,3,8,1,9):m.insert(x)
+print(m.h[:]);print([m.extractMin() for _ in range(5)])</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[1, 3, 8, 5, 9]
+[1, 3, 5, 8, 9]</code></pre>
+</section><section class="card" id="q16">
+<h2>16. Heap Sort (Max-Heap, in-place)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def hs(a):
+    def sd(i,n):
+        m=max((c for c in(i,2*i+1,2*i+2) if c&lt;n),key=lambda c:a[c])
+        if m!=i:a[i],a[m]=a[m],a[i];sd(m,n)
+    for i in range(len(a)//2-1,-1,-1):sd(i,len(a))
+    for e in range(len(a)-1,0,-1):a[0],a[e]=a[e],a[0];sd(0,e)
+a=[12,4,19,7,1,15];hs(a);print(a)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[1, 4, 7, 12, 15, 19]</code></pre>
+</section><section class="card" id="q17">
+<h2>17. Hash Table - Separate Chaining</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class HT:
+    def __init__(s,m=5):s.t=[[] for _ in range(m)]
+    def ins(s,k):s.t[k%len(s.t)].append(k)
+    def find(s,k):return k in s.t[k%len(s.t)]
+    def delete(s,k):
+        b=s.t[k%len(s.t)]
+        if k in b:b.remove(k)
+h=HT()
+for k in(10,15,21,26,31,7):h.ins(k)
+print(h.t);print(&quot;find 26:&quot;,h.find(26));h.delete(26);print(&quot;find 26:&quot;,h.find(26));print(h.t)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[[10, 15], [21, 26, 31], [7], [], []]
+find 26: True
+find 26: False
+[[10, 15], [21, 31], [7], [], []]</code></pre>
+</section><section class="card" id="q18">
+<h2>18. Collision &amp; Chain Length Tracker</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>m=5;t=[[] for _ in range(m)];col=0
+for k in(10,15,21,26,31,7,12,3):
+    b=t[k%m];col+=len(b)&gt;0;b.append(k)
+print(t);print(&quot;Collisions:&quot;,col,&quot;Max chain:&quot;,max(map(len,t)))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[[10, 15], [21, 26, 31], [7, 12], [3], []]
+Collisions: 4 Max chain: 3</code></pre>
+</section><section class="card" id="q19">
+<h2>19. Skip List</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>class SL:
+    def __init__(s):s.h=[None]*5
+    def path(s,k):
+        u=[0]*4;c=s.h
+        for i in(3,2,1,0):
+            while c[i+1] and c[i+1][0]&lt;k:c=c[i+1]
+            u[i]=c
+        return u
+    def ins(s,k):
+        u=s.path(k);n=[k]+[None]*4;lv=1
+        while lv&lt;4 and random.random()&lt;.5:lv+=1
+        for i in range(lv):n[i+1]=u[i][i+1];u[i][i+1]=n
+    def find(s,k):n=s.path(k)[0][1];return bool(n and n[0]==k)
+sl=SL()
+for k in(30,10,50,20,40):sl.ins(k)
+print(sl.find(20),sl.find(35))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>True False</code></pre>
+</section><section class="card" id="q20">
+<h2>20. BST - insert, delete (2 children), LCA</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def ins(r,k):
+    if not r:return [k,0,0]
+    i=1+(k&gt;r[0]);r[i]=ins(r[i],k);return r
+def dele(r,k):
+    if r:
+        if k!=r[0]:i=1+(k&gt;r[0]);r[i]=dele(r[i],k)
+        elif r[1] and r[2]:
+            m=r[2]
+            while m[1]:m=m[1]
+            r[0]=m[0];r[2]=dele(r[2],m[0])
+        else:return r[1] or r[2]
+    return r
+def lca(r,a,b):
+    while not a&lt;=r[0]&lt;=b:r=r[1+(a&gt;r[0])]
+    return r[0]
+io=lambda r:io(r[1])+[r[0]]+io(r[2]) if r else []
+root=0
+for k in(50,30,70,20,40,60,80):root=ins(root,k)
+print(&quot;LCA(20,40) =&quot;,lca(root,20,40));root=dele(root,50);print(&quot;After deleting 50:&quot;,io(root),&quot;root =&quot;,root[0])</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>LCA(20,40) = 30
+After deleting 50: [20, 30, 40, 60, 70, 80] root = 60</code></pre>
+</section><section class="card" id="q21">
+<h2>21. AVL Tree (LL, RR, LR, RL)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>ht=lambda n:1+max(ht(n[1]),ht(n[2])) if n else 0
+def rot(n,i):x=n[i];n[i]=x[3-i];x[3-i]=n;return x
+def avl(n,k):
+    if not n:return [k,0,0]
+    i=1+(k&gt;n[0]);n[i]=avl(n[i],k);b=ht(n[1])-ht(n[2])
+    if abs(b)&gt;1:
+        i=2-(b&gt;0)
+        if (k&gt;n[i][0])==(i==1):n[i]=rot(n[i],3-i)
+        return rot(n,i)
+    return n
+pre=lambda r:[r[0]]+pre(r[1])+pre(r[2]) if r else []
+root=0
+for k in(10,20,30,40,50,25):root=avl(root,k)
+print(&quot;Preorder:&quot;,pre(root),&quot;root =&quot;,root[0])</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>Preorder: [30, 20, 10, 25, 40, 50] root = 30</code></pre>
+</section><section class="card" id="q22">
+<h2>22. Splay Tree</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def rot(n,i):x=n[i];n[i]=x[3-i];x[3-i]=n;return x
+def sp(r,k):
+    if not r or r[0]==k:return r
+    i=1+(k&gt;r[0]);c=r[i]
+    if not c:return r
+    if k!=c[0]:
+        j=1+(k&gt;c[0]);c[j]=sp(c[j],k)
+        if c[j]:
+            if i==j:r=rot(r,i)
+            else:r[i]=rot(c,j)
+    return rot(r,i)
+def sins(r,k):
+    r=sp(r,k)
+    if r and r[0]==k:return r
+    n=[k,0,0]
+    if r:i=1+(k&gt;r[0]);n[3-i]=r;n[i]=r[i];r[i]=0
+    return n
+root=0
+for k in(10,20,30):root=sins(root,k);print(&quot;inserted&quot;,k,&quot;-&gt; root&quot;,root[0])
+root=sp(root,10);print(&quot;access 10 -&gt; root&quot;,root[0])</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>inserted 10 -&gt; root 10
+inserted 20 -&gt; root 20
+inserted 30 -&gt; root 30
+access 10 -&gt; root 10</code></pre>
+</section><section class="card" id="q23">
+<h2>23. BFS</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>g={0:[1,2],1:[0,3],2:[0,3],3:[1,2]}
+def bfs(s):
+    v=[s];q=deque([s])
+    while q:
+        for n in g[q.popleft()]:
+            if n not in v:v.append(n);q.append(n)
+    return v
+print(bfs(0))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>[0, 1, 2, 3]</code></pre>
+</section><section class="card" id="q24">
+<h2>24. DFS &amp; Connected Components</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>g2={0:[1],1:[0,2],2:[1],3:[4],4:[3],5:[]}
+seen=set()
+def dfs(u,c):
+    c.append(u)
+    for v in g2[u]:
+        if v not in seen:seen.add(v);dfs(v,c)
+comps=[]
+for u in g2:
+    if u not in seen:seen.add(u);c=[];dfs(u,c);comps.append(c)
+print(len(comps),&quot;components:&quot;,comps)</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>3 components: [[0, 1, 2], [3, 4], [5]]</code></pre>
+</section><section class="card" id="q25">
+<h2>25. Cycle Detection (Directed Graph)</h2>
+<div class="codewrap"><button class="copy" type="button">Copy code</button><pre><code>def cyc(g):
+    vis=set();st=set()
+    def d(u):
+        vis.add(u);st.add(u)
+        for v in g[u]:
+            if v in st or v not in vis and d(v):return True
+        st.discard(u);return False
+    return any(d(u) for u in g if u not in vis)
+print(cyc({0:[1],1:[2],2:[0]}),cyc({0:[1],1:[2],2:[]}))</code></pre></div>
+<div class="outlabel">Output</div><pre class="out"><code>True False</code></pre>
+</section>
+</main>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.parentElement.querySelector('code').textContent;
+    function ok(){b.textContent='Copied!';b.classList.add('done');setTimeout(function(){b.textContent='Copy code';b.classList.remove('done')},1500)}
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
+    function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}
+  });
+});
+</script></body></html>
